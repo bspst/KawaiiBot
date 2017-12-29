@@ -9,7 +9,10 @@ print("Starting KawaiiBot")
 chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-'
 secret = ''.join(random.choice(chars) for i in range(random.randint(32, 64)))
 bot = telepot.Bot(os.environ['BOT_TOKEN'])
-bot.setWebhook("https://kawaiicentral-bot.herokuapp.com/{}".format(secret), max_connections=1)
+
+webhook_url = "https://kawaiicentral-bot.herokuapp.com/{}".format(secret)
+if webhook_url != bot.getWebhookInfo()['url']:
+    bot.setWebhook(webhook_url, max_connections=1)
 
 app = Flask(__name__)
 
