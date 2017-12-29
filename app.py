@@ -1,30 +1,21 @@
-from flask import Flask, request
 import telepot
+import time
 import urllib3
-import random, string
 import os
 
-print("Starting KawaiiBot")
-
-chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-'
-secret = ''.join(random.choice(chars) for i in range(random.randint(32, 64)))
 bot = telepot.Bot(os.environ['BOT_TOKEN'])
 
-webhook_url = "https://kawaiicentral-bot.herokuapp.com/{}".format(secret)
-if webhook_url != bot.getWebhookInfo()['url']:
-    bot.setWebhook(webhook_url, max_connections=1)
+def handle(msg):
+    content_type, chat_type, chat_id = telepot.glance(msg)
+    print(content_type, chat_type, chat_id)
 
-app = Flask(__name__)
+    if content_type == 'text':
+        bot.sendMessage(chat_id, "You said '{}'".format(msg["text"]))
 
-@app.route('/{}'.format(secret), methods=["POST"])
-def telegram_webhook():
-    update = request.get_json()
-    print(update)
-    if "message" in update:
-        text = update["message"]["text"]
-        chat_id = update["message"]["chat"]["id"]
-        bot.sendMessage(chat_id, "From the web: you said '{}'".format(text))
-    return "OK"
+bot.message_loop(handle)
 
-if __name__ == "__main__":
-    app.run()
+print('Listening ...')
+
+# Keep the program running.
+while 1:
+    time.sleep(10)
