@@ -4,6 +4,7 @@ import urllib3
 import os
 
 bot = telepot.Bot(os.environ['BOT_TOKEN'])
+bot.setWebhook("")
 
 def handle(msg):
     content_type, chat_type, chat_id = telepot.glance(msg)
